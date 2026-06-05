@@ -5,25 +5,14 @@ import { GasChecker } from './gas-checker.js'
 import { GM_IGNORE_POINTS_LIMIT } from './season-config.js'
 
 // Импорт всех модулей
-import { performLiquidityManagement as performAaveLiquidity } from './modules/aave.js'
 import { performArkadaCheckin } from './modules/arkada-checkin.js'
-import { performCollection } from './modules/collector.js'
 import { performLootcoinCheckin } from './modules/lootcoin.js'
 import { performJumperSwap } from './modules/jumper.js'
-import { performMorphoLiquidityManagement } from './modules/morpho.js'
-import { performSakeFinanceOperations } from './modules/sake-finance.js'
-import { performLiquidityManagement as performStargateLiquidity } from './modules/stargate.js'
-import { performDepositManagement } from './modules/untitled-bank.js'
 import { performRevoke } from './modules/revoke.js'
 import { performHarkan } from './modules/harkan.js'
 import { performVelodrome } from './modules/velodrome.js'
 import { performWowmax } from './modules/wowmax.js'
 import { performCaptainCheckin } from './modules/captain-checkin.js'
-import { performMmpQuest } from './modules/mmp-quest.js'
-import { performBurrowBash } from './modules/burrow-bash.js'
-import { performWorldOfTrinity } from './modules/world-of-trinity.js'
-import { performStartaleInvite } from './modules/startale-invite.js'
-import { performStartaleGm } from './modules/startale-gm.js'
 
 // Интерфейс для результата выполнения модуля
 interface ModuleResult {
@@ -39,30 +28,9 @@ interface ModuleResult {
   swapAmount?: string
   targetToken?: string
   usdcBalance?: string
-  aTokenBalance?: string
-  morphoBalance?: string
-  redeemableBalance?: string
-  bankBalance?: string
   streak?: number
   blockNumber?: bigint
-  // Поля для Sake Finance
-  initialUsdcBalance?: string
-  initialATokenBalance?: string
-  finalUsdcBalance?: string
-  finalATokenBalance?: string
-  withdrawTransactionHash?: string | null
-  supplyTransactionHash?: string | null
-  finalWithdrawTransactionHash?: string | null
-  depositAmount?: string
   message?: string
-  // Поля для других модулей
-  depositTransactionHash?: string
-  redeemTransactionHash?: string | null
-  withdrawTxHash?: string
-  // Поля для автоматической покупки USDC.e
-  usdcPurchased?: boolean
-  usdcPurchaseHash?: string | undefined
-  usdcPurchaseAmount?: string | undefined
   [key: string]: unknown
 }
 
@@ -126,11 +94,6 @@ export class ParallelExecutor {
   // Список всех доступных модулей
   private readonly modules: Module[] = [
     {
-      name: 'Aave',
-      description: 'Управление ликвидностью в протоколе Aave',
-      execute: performAaveLiquidity
-    },
-    {
       name: 'Arkada Check-in',
       description: 'Ежедневный check-in в Arkada',
       execute: performArkadaCheckin
@@ -141,34 +104,9 @@ export class ParallelExecutor {
       execute: performLootcoinCheckin
     },
     {
-      name: 'Collector',
-      description: 'Сбор токенов и проверка ликвидности во всех протоколах',
-      execute: performCollection
-    },
-    {
       name: 'Jumper',
       description: 'Свапы токенов через LI.FI',
       execute: performJumperSwap
-    },
-    {
-      name: 'Morpho',
-      description: 'Управление ликвидностью в протоколе Morpho',
-      execute: performMorphoLiquidityManagement
-    },
-    {
-      name: 'Sake Finance',
-      description: 'Операции в протоколе Sake Finance',
-      execute: performSakeFinanceOperations
-    },
-    {
-      name: 'Stargate',
-      description: 'Управление ликвидностью в протоколе Stargate',
-      execute: performStargateLiquidity
-    },
-    {
-      name: 'Untitled Bank',
-      description: 'Управление депозитами в Untitled Bank',
-      execute: performDepositManagement
     },
     {
       name: 'Revoke',
@@ -194,31 +132,6 @@ export class ParallelExecutor {
       name: 'Captain Check-in',
       description: 'Ежедневный check-in в Captain',
       execute: performCaptainCheckin
-    },
-    {
-      name: 'MMP Quest',
-      description: 'Morning Moon Pocket S10 quest — wild → craft → stake',
-      execute: performMmpQuest
-    },
-    {
-      name: 'Burrow Bash',
-      description: 'Burrow Bash: createGame для квеста "Play 10 games" (1 tx за вызов, проверка через portal)',
-      execute: performBurrowBash
-    },
-    {
-      name: 'World of Trinity',
-      description: 'World of Trinity: 1 battle через WS matchmaking + AutoLose (квест Join 3 games)',
-      execute: performWorldOfTrinity
-    },
-    {
-      name: 'Startale Invite',
-      description: 'Реферальный квест Startale (startale_10/quests[1]): SIWE auth main → invitee + referrer_code → portal polling',
-      execute: performStartaleInvite
-    },
-    {
-      name: 'Startale GM',
-      description: 'Ежедневный GM на Startale (startale_10/quests[0]): UserOp через Smart Account (ERC-7579 Nexus) с Startale paymaster',
-      execute: performStartaleGm
     }
   ]
 
